@@ -3,21 +3,17 @@
 #' The import call constructed by this function can be evaluated with
 #' \code{eval} to perform the actual import.
 #'
-#' @param name character: The name of the object to import.
-#' @param pkg character: The name of the package to import from.
-#' @param ns character: The namespace in which to import.
-#' @param new_name character: The new name to use for the imported object.
+#' @param params list of parameters to substitute in the call.
+#' @param exports_only logical indicating whether only exported objects are
+#'   allowed.
 #'
 #' @return A call object.
-make_import_call <- function(name, pkg, ns, new_name)
+make_import_call <- function(params, exports_only)
 {
-  params <- list(name = name,
-                 pkg  = pkg,
-                 ns   = if (is.null(ns)) -1 else ns,
-                 new_name = new_name)
-
-  substitute(assign(new_name,
-                    get(name, envir = asNamespace(pkg), inherits = FALSE),
-                    ns),
-             params)
+  if (exports_only)
+    substitute(assign(new, getExportedValue(nm, ns = ns), pos = pos),
+               params)
+  else
+    substitute(assign(new, get(nm, envir = ns, inherits = inh), pos = pos),
+               params)
 }

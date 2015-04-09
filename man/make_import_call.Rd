@@ -4,16 +4,13 @@
 \alias{make_import_call}
 \title{Make an import call object.}
 \usage{
-make_import_call(name, pkg, ns, new_name)
+make_import_call(params, exports_only)
 }
 \arguments{
-\item{name}{character: The name of the object to import.}
+\item{params}{list of parameters to substitute in the call.}
 
-\item{pkg}{character: The name of the package to import from.}
-
-\item{ns}{character: The namespace in which to import.}
-
-\item{new_name}{character: The new name to use for the imported object.}
+\item{exports_only}{logical indicating whether only exported objects are
+  allowed.}
 }
 \value{
 A call object.
