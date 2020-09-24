@@ -1,6 +1,9 @@
 #' @rdname importfunctions
 #' @export
-into <- function(.into, ..., .from, .library = .libPaths()[1L])
+into <- function(.into, ..., .from,
+                 .library = .libPaths()[1L], .directory=".",
+                 .all=(length(.except) > 0), .except=character(),
+                 .chdir = TRUE, .character_only = FALSE)
 {
   # Capture the call and check that it is valid.
   cl <- match.call()
@@ -15,5 +18,6 @@ into <- function(.into, ..., .from, .library = .libPaths()[1L])
 
   # Rewrite the call to import::from syntax and evaluate in parent frame.
   cl[[1L]][[3L]] <- quote(from)
+
   eval.parent(cl)
 }
