@@ -5,11 +5,14 @@ output:
     toc: true
 vignette: >
   %\VignetteIndexEntry{The import package}
-  %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
 ---
+<img src="import.png" align="right" alt="" width="120" />
 
-* This version: September, 2020. 
+* This version: May, 2022
 * Latest version at: https://import.rticulate.org/articles/import.html
 * A briefer intro at: https://import.rticulate.org/
 
@@ -203,7 +206,7 @@ not immediately reveal that it's main purpose is to provide the pipe
 operator, `%>%`.
 
 
-### Importing Functions from "Module" Scripts
+### Importing Functions from "Module" Scripts {#module}
 
 
 The `import` package allows for importing objects defined in script files,
@@ -361,51 +364,65 @@ The default is `.` (the current working directory).
 
 ### Choosing where the imported functions are placed
 
-One can also specify which names to use in the search path 
-and use several to group imports:
+One can also specify which names to use in the search path and use several to
+group imports. Names can be specified either as character literals or as
+variables of type `character` (for example if the environment needs to be
+determined dynamically).
 
 ```{r, eval = FALSE}
-import::from(magrittr, "%>%", "%$%", .into = "operators") 
+import::from(magrittr, "%>%", "%$%", .into = "operators")
 import::from(dplyr, arrange, .into = "datatools")
+import::from(psych, describe, .into=month.name[1]) # Uses env: "January"
 ```
 
-If using custom search path entities actively, one might prefer the 
-alternative syntax (which does the same but reverses the argument order):
+The `import::into` and `import::from` accept the same parameters and achieve the
+same result. The the choice between them a matter of preference). If using
+custom search path entities actively, one might prefer the alternative syntax
+(which does the same but reverses the argument order):
 
 ```{r, eval = FALSE}
 import::into("operators", "%>%", "%$%", .from = magrittr)
 import::into("datatools", arrange, .from = dplyr)
+import::into(month.name[1], describe, .from=psych)
 ```
 
-Note, that the `.from` and `.into` arguments are prefixed by a dot to
-clearly distinguish them from other named arguments. The `import::into`
-and `import::from` accept the same parameters and achieve the same
-result. The the choice between them a matter of preference).
+Be aware that beginning in version `1.3.0` hidden objects (those with names
+prefixed by a period) are supported. Take care to avoid name clashes with
+argument names.
 
 If it is desired to import objects directly into the current environment, 
 this can be accomplished by `import::here`. This is particularly 
 useful when importing inside a function definition, or module scripts as
-described below.
+described [here](#module).
 
 ```{r, eval = FALSE}
-import::into("operators", "%>%", "%$%", .from = magrittr)
-import::into("datatools", arrange, .from = dplyr)
+import::here("%>%", "%$%", .from = magrittr)
+import::here(arrange, .from = dplyr)
 ```
 
-The `.into` parameter can be surrounded with `{}`, which leads it to be
-interpreted as a variable or function, instead of as the name of an
-environment in the search path. Examples include:
+Instead of specifying a named environment on the search path, by passing a
+`character` to the `.into` parameter, it is possible to directly specify an
+environment. The function automatically determines which use case is involved,
+based on the `mode()` of the `.into` parameter (either `character` or
+`environment`).
+
+Prior to version `1.3.0`, non-standard evaluation (NSE) was applied to the
+`.into` parameter, and it was necessary to surround it with `{}`, in order for
+it to be treated as an `environment`. This is no longer needed, although it is
+still allowed (curly brackets are simply ignored).
+
+Examples include:
 
 ```{r, eval = FALSE}
 # Import into the local environment
-import::into({environment()}, "%>%", .from = magrittr)
+import::into(environment(), "%>%", .from = magrittr)
 
-# Import ihnto the global environment
+# Import into the global environment, curlies are optional
 import::into({.GlobalEnv}, "%>%", "%$%", .from = magrittr)
 
 # Import into a new environment, mainly useful for python-style imports
 # (see below)
-x = import::into({new.env()}, "%<>%", .from = magrittr)
+x = import::into(new.env(), "%<>%", .from = magrittr)
 ```
 
 
@@ -413,17 +430,22 @@ x = import::into({new.env()}, "%<>%", .from = magrittr)
 
 ## Advanced usage and the .character_only parameter
 
-The `import` package uses non-standard evaluation in order to allow the 
-names of packages and functions to be listed without quoting them. This
-makes some common use-cases very straightforward, but can get in the 
-way of more programmatic usages.
+The `import` package uses non-standard evaluation (NSE) on the `.from` and `...`
+parameters, allowing the names of packages and functions to be listed without
+quoting them. This makes some common use-cases very straightforward, but can get
+in the way of more programmatic usages.
 
 This is where the `.character_only` parameter comes in handy. By setting
-`.character_only=TRUE`, all non-standard evaluation of the `.from`, 
-`.into` and the `...` parameters is disabled (other parameters are 
-always evaluated in a standard way). Instead, the parameters are processed
-as character vectors containing the relevant values. It is useful to 
-examine some examples of how this can be helpful.
+`.character_only=TRUE`, the non-standard evaluation of the `.from` and the `...`
+parameters is disabled. Instead, the parameters are processed as character
+vectors containing the relevant values.
+
+(Previously, NSE was also applied to the `.into` parameter, but as of version
+`1.3.0` this is no longer the case, and all parameters except `.from` and `...`
+are always evaluated in a standard way.)
+
+It is useful to examine some examples of how specifying `.character_only=TRUE`
+can be helpful.
 
 
 ## Programmatic selection of objects to import
@@ -462,7 +484,7 @@ working directory, but one still does not want to specify a
 hard-coded absolute path, but to determine it at run time:
 
 ```{r, eval = FALSE}
-mymodule <- file.path(mypath,"module.R")
+mymodule <- file.path(mypath, "module.R")
 import::from(mymodule, "myfunction", .character_only=TRUE)
 ```
 
@@ -543,3 +565,38 @@ select(head(cars),dist)
 #> Error in select(head(cars), dist): could not find function "select"
 ```
 
+
+## Importing S3 methods
+
+![](lifecycle-experimental.svg)
+
+S3 methods work well in local context, but when the method is called from a different environment, it must be registered (in packages, this is done in the `NAMESPACE` file). `import` can now register methods of form `generic.class` or `generic.class.name` automatically using the new `.S3` argument. By specifying `.S3=TRUE`, `import` will automatically detect methods for existing or new generics. No need to export and/or register them manually!
+
+Consider following script `foo.r` with a generic and two methods:
+```{r, eval = FALSE}
+# foo.r
+# functions with great foonctionality
+foo = function(x){
+  UseMethod("foo", x)
+}
+
+foo.numeric <- function(x){
+  x + 1
+}
+
+foo.character <- function(x){
+  paste0("_", x, "_")
+}
+```
+
+Now, all we need is to import the `foo` generic:
+```{r, eval = FALSE}
+import::from("foo.r", foo, .S3=TRUE)
+
+foo(0) # 1
+foo("bar") # _bar_
+```
+
+*This is an experimental feature. We think it should work well and you are
+encouraged to use it and report back – but the syntax and semantics may change
+in the future to improve the feature.*

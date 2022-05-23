@@ -15,7 +15,8 @@ from(
   .all = (length(.except) > 0),
   .except = character(),
   .chdir = TRUE,
-  .character_only = FALSE
+  .character_only = FALSE,
+  .S3 = FALSE
 )
 
 here(
@@ -26,7 +27,8 @@ here(
   .all = (length(.except) > 0),
   .except = character(),
   .chdir = TRUE,
-  .character_only = FALSE
+  .character_only = FALSE,
+  .S3 = FALSE
 )
 
 into(
@@ -38,7 +40,8 @@ into(
   .all = (length(.except) > 0),
   .except = character(),
   .chdir = TRUE,
-  .character_only = FALSE
+  .character_only = FALSE,
+  .S3 = FALSE
 )
 }
 \arguments{
@@ -47,7 +50,8 @@ into(
 \item{...}{Names or name-value pairs specifying objects to import.
 If arguments are named, then the imported object will have this new name.}
 
-\item{.into}{The name of the search path entry. Enclosing the value in curly
+\item{.into}{The name of the search path entry, either as a character string
+or as a symbol containing a string. Enclosing the value in curly
 brackets causes the parameter to be treated as an actual
 environment value, rather than the name of an environment. Using
 \code{.into={environment()}} causes imports to be made into the current
@@ -76,6 +80,15 @@ sourcing a module (this parameter is ignored for libraries)}
 \item{.character_only}{A logical indicating whether \code{.from} and
 \code{...} can be assumed to be character strings. (Note that this
 parameter does not apply to how the \code{.into} parameter is handled).}
+
+\item{.S3}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}} A logical indicating whether an
+automatic detection and registration of S3 methods should be performed. The
+S3 methods are assumed to be in the standard form \code{generic.class}. Methods
+can also be registered manually instead using be registered manually
+instead using the \code{.S3method(generic, class, method)} call.  \emph{This is an
+experimental feature. We think it should work well and you are encouraged
+to use it and report back – but the syntax and semantics may change in the
+future to improve the feature.}}
 }
 \value{
 a reference to the environment containing the imported objects.
@@ -97,7 +110,9 @@ The function arguments can be quoted or unquoted as with e.g. \code{library}.
 In any case, the character representation is used when unquoted arguments are
 provided (and not the value of objects with matching names). The period in
 the argument names \code{.into} and \code{.from} are there to avoid name
-clash with package objects. The double-colon syntax \code{import::from}
+clash with package objects. However, while importing of hidden objects (those with
+names prefixed by a period) is supported, care should be taken not to conflict
+with the argument names. The double-colon syntax \code{import::from}
 allows for imports of exported objects (and lazy data) only. To import
 objects that are not exported, use triple-colon syntax, e.g.
 \code{import:::from}. The two ways of calling the \code{import} functions

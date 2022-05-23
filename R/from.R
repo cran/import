@@ -15,7 +15,9 @@
 #' In any case, the character representation is used when unquoted arguments are
 #' provided (and not the value of objects with matching names). The period in
 #' the argument names \code{.into} and \code{.from} are there to avoid name
-#' clash with package objects. The double-colon syntax \code{import::from}
+#' clash with package objects. However, while importing of hidden objects (those with
+#' names prefixed by a period) is supported, care should be taken not to conflict
+#' with the argument names. The double-colon syntax \code{import::from}
 #' allows for imports of exported objects (and lazy data) only. To import
 #' objects that are not exported, use triple-colon syntax, e.g.
 #' \code{import:::from}. The two ways of calling the \code{import} functions
@@ -48,7 +50,8 @@
 #' @param .from The package from which to import.
 #' @param ... Names or name-value pairs specifying objects to import.
 #'   If arguments are named, then the imported object will have this new name.
-#' @param .into The name of the search path entry. Enclosing the value in curly
+#' @param .into The name of the search path entry, either as a character string
+#'   or as a symbol containing a string. Enclosing the value in curly
 #'   brackets causes the parameter to be treated as an actual
 #'   environment value, rather than the name of an environment. Using
 #'   \code{.into={environment()}} causes imports to be made into the current
@@ -71,6 +74,14 @@
 #' @param .character_only A logical indicating whether \code{.from} and
 #'   \code{...} can be assumed to be character strings. (Note that this
 #'   parameter does not apply to how the \code{.into} parameter is handled).
+#' @param .S3 `r badge("experimental")` A logical indicating whether an
+#'   automatic detection and registration of S3 methods should be performed. The
+#'   S3 methods are assumed to be in the standard form `generic.class`. Methods
+#'   can also be registered manually instead using be registered manually
+#'   instead using the `.S3method(generic, class, method)` call.  *This is an
+#'   experimental feature. We think it should work well and you are encouraged
+#'   to use it and report back – but the syntax and semantics may change in the
+#'   future to improve the feature.*
 #'
 #' @return a reference to the environment containing the imported objects.
 #'
@@ -90,7 +101,7 @@
 from <- function(.from, ..., .into = "imports",
                  .library = .libPaths()[1L], .directory=".",
                  .all=(length(.except) > 0), .except=character(),
-                 .chdir = TRUE, .character_only = FALSE)
+                 .chdir = TRUE, .character_only = FALSE, .S3 = FALSE)
 {
   # Capture the relevant part of the call to see if
   # the import function is used as intended.
@@ -114,74 +125,66 @@ from <- function(.from, ..., .into = "imports",
             (.all!=FALSE || length(.except)!=0))
     stop("`import:::` must not be used in conjunction with .all or .except", call. = FALSE)
 
-  # .into="" is a short-hand for .into={environment()}
-  if (!missing(.into) && is.character(.into) && .into == "")
-    .into = quote({environment()})
-
-  # If we are inside a bad recursion call, warn and set .into to the only
-  # acceptable value for an inner recursive call, which is quote({environment()})
-  if (detect_bad_recursion(.traceback(0))) {
-     .into = quote({environment()})
-     warning(paste0("import::from() or import::into() was used recursively, to import \n",
-                    "    a module from within a module.  Please rely on import::here() \n",
-                    "    when using the import package in this way.\n",
-                    "    See vignette(import) for further details."))
-  }
-
   # Extract the arguments
   symbols <- symbol_list(..., .character_only = .character_only, .all = .all)
 
-  from    <-
-    `if`(isTRUE(.character_only), .from, symbol_as_character(substitute(.from)))
+  # If .character_only==FALSE, we substitute the symbol with its string representation
+  if (!isTRUE(.character_only))
+    .from <- symbol_as_character(substitute(.from))
 
-  into_expr <- substitute(.into)
-  `{env}` <- identical(into_expr[[1]], quote(`{`))
+  # .into =="" is a special case, indicating that objects should be imported directly
+  # into the calling environment (as in import::here()). So we set .into<-parent.frame()
+  if (is.character(.into) && .into=="")
+    .into <- parent.frame()
 
-  # if {env} syntax is used, treat env as explicit env
-  if (`{env}`) {
-    into <- eval.parent(.into)
-    if (!is.environment(into))
-      stop("into is not an environment, but {env} notation was used.", call. = FALSE)
-  } else {
-    into    <- symbol_as_character(into_expr)
+  # If we are inside a bad recursion call, warn and set .into to the only
+  # acceptable value for an inner recursive call, which is parent.frame() (the calling environment)
+  if (detect_bad_recursion(.traceback(0))) {
+    .into <- parent.frame()
+    warning(paste0("import::from() or import::into() was used recursively, to import \n",
+                   "    a module from within a module.  Please rely on import::here() \n",
+                   "    when using the import package in this way.\n",
+                   "    See vignette(import) for further details."))
   }
 
-  # Check whether assignment should be done in a named entry in the search path.
+  # .into is either a character or an environment. Check which it is
+  into_is_env <- is.environment(.into)
+
+  # .into handling. Check whether assignment should be done in a named entry in the search path.
   use_into <- !exists(".packageName", parent.frame(), inherits = TRUE) &&
-              !`{env}` &&
-              !into == ""
+              !into_is_env
 
   # Check whether the name already exists in the search path.
-  into_exists <- !`{env}` && (into %in% search())
+  into_exists <- !into_is_env && (.into %in% search())
 
   # Create the entry if needed.
   make_attach <- attach # Make R CMD check happy.
   if (use_into && !into_exists)
-    make_attach(NULL, 2L, name = into)
+    make_attach(NULL, 2L, name = .into)
 
   # Determine whether the source is a script or package.
-  from_is_script <- is_script(from, .directory)
+  from_is_script <- is_script(.from, .directory)
 
   if (from_is_script) {
-    from_created <- from %in% ls(scripts, all.names = TRUE)
-    if (!from_created || modified(from, .directory) > modified(scripts[[from]])) {
+    from_created <- .from %in% ls(scripts, all.names = TRUE)
+    if (!from_created || modified(.from, .directory) > modified(scripts[[.from]])) {
 
       # Find currently attachments
       attached <- search()
 
       # Create a new environment to manage the script module if it does not exist
       if (!from_created)
-        assign(from, new.env(parent = parent.frame()), scripts)
+        assign(.from, new.env(parent = parent.frame()), scripts)
 
       # Make modification time stamp
-      modified(scripts[[from]]) <- modified(from, .directory)
+      modified(scripts[[.from]]) <- modified(.from, .directory)
 
       # Make behaviour match that of a package, i.e. import::from won't use "imports"
-      scripts[[from]][[".packageName"]] <- from
+      scripts[[.from]][[".packageName"]] <- .from
 
       # Source the file into the new environment.
       packages_before <- .packages()
-      suppress_output(sys.source(file_path(.directory, from), scripts[[from]], chdir = .chdir))
+      suppress_output(sys.source(file_path(.directory, .from), scripts[[.from]], chdir = .chdir))
 
       # If sourcing the script loaded new packages, raise error
       packages_after <- .packages()
@@ -198,14 +201,19 @@ from <- function(.from, ..., .into = "imports",
           detach(d, character.only = TRUE)
       })
     }
-    pkg <- scripts[[from]]
-    pkg_name <- from
+    pkg <- scripts[[.from]]
+    pkg_name <- .from
 
     # Create list of all available objects (for use with the .all parameter)
-    all_objects <- ls(scripts[[from]])
+    all_objects <- ls(scripts[[.from]], all.names = TRUE)
+
+    # Only for scripts: Register S3 methods, if needed.
+    if (.S3)
+        register_s3_methods(all_objects, env=pkg)
+
   } else {
     # Load the package namespace, which is passed to the import calls.
-    spec <- package_specs(from)
+    spec <- package_specs(.from)
     all_objects <- getNamespaceExports(spec$pkg)
     pkg <- tryCatch(
       loadNamespace(spec$pkg, lib.loc = .library,
@@ -238,7 +246,7 @@ from <- function(.from, ..., .into = "imports",
              nm  = symbols[s],
              ns  = pkg,
              inh = !exports_only,
-             pos = if (use_into || `{env}`) into else -1),
+             pos = if (use_into || into_is_env) .into else -1),
         exports_only && !from_is_script)
 
     if (!from_is_script)
@@ -250,9 +258,9 @@ from <- function(.from, ..., .into = "imports",
              error = function(e) stop(e$message, call. = FALSE))
   }
 
-  if (!`{env}` && into != "" && !exists("?", into, mode = "function", inherits = FALSE)) {
-    assign("?", `?redirect`, into)
+  if (!into_is_env && !exists("?", .into, mode = "function", inherits = FALSE)) {
+    assign("?", `?redirect`, .into)
   }
 
-  invisible(as.environment(into))
+  invisible(as.environment(.into))
 }

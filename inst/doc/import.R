@@ -124,25 +124,27 @@
 ## ---- eval = FALSE------------------------------------------------------------
 #  import::from(magrittr, "%>%", "%$%", .into = "operators")
 #  import::from(dplyr, arrange, .into = "datatools")
+#  import::from(psych, describe, .into=month.name[1]) # Uses env: "January"
 
 ## ---- eval = FALSE------------------------------------------------------------
 #  import::into("operators", "%>%", "%$%", .from = magrittr)
 #  import::into("datatools", arrange, .from = dplyr)
+#  import::into(month.name[1], describe, .from=psych)
 
 ## ---- eval = FALSE------------------------------------------------------------
-#  import::into("operators", "%>%", "%$%", .from = magrittr)
-#  import::into("datatools", arrange, .from = dplyr)
+#  import::here("%>%", "%$%", .from = magrittr)
+#  import::here(arrange, .from = dplyr)
 
 ## ---- eval = FALSE------------------------------------------------------------
 #  # Import into the local environment
-#  import::into({environment()}, "%>%", .from = magrittr)
+#  import::into(environment(), "%>%", .from = magrittr)
 #  
-#  # Import ihnto the global environment
+#  # Import into the global environment, curlies are optional
 #  import::into({.GlobalEnv}, "%>%", "%$%", .from = magrittr)
 #  
 #  # Import into a new environment, mainly useful for python-style imports
 #  # (see below)
-#  x = import::into({new.env()}, "%<>%", .from = magrittr)
+#  x = import::into(new.env(), "%<>%", .from = magrittr)
 
 ## ---- eval = FALSE------------------------------------------------------------
 #  objects <- c("tidy", "glance", "augment")
@@ -153,7 +155,7 @@
 #  import::from("dplyr", objects, .character_only=TRUE)
 
 ## ---- eval = FALSE------------------------------------------------------------
-#  mymodule <- file.path(mypath,"module.R")
+#  mymodule <- file.path(mypath, "module.R")
 #  import::from(mymodule, "myfunction", .character_only=TRUE)
 
 ## ---- eval = FALSE------------------------------------------------------------
@@ -184,4 +186,25 @@
 #  # Note that functions are not visible without dp$ prefix
 #  select(head(cars),dist)
 #  #> Error in select(head(cars), dist): could not find function "select"
+
+## ---- eval = FALSE------------------------------------------------------------
+#  # foo.r
+#  # functions with great foonctionality
+#  foo = function(x){
+#    UseMethod("foo", x)
+#  }
+#  
+#  foo.numeric <- function(x){
+#    x + 1
+#  }
+#  
+#  foo.character <- function(x){
+#    paste0("_", x, "_")
+#  }
+
+## ---- eval = FALSE------------------------------------------------------------
+#  import::from("foo.r", foo, .S3=TRUE)
+#  
+#  foo(0) # 1
+#  foo("bar") # _bar_
 
