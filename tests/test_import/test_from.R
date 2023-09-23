@@ -36,6 +36,16 @@ test_that("Imports from modules work", {
   cleanup_environment()
 })
 
+test_that("Subsequent imports from modules work", {
+  expect_error ( fun1() )
+  expect_error ( fun7() )
+  expect_silent( import::from(module_base.R, .all=TRUE) )
+  expect_silent( import::from(module_subsequent.R, .all=TRUE) )
+  expect_equal ( fun1(), "fun1" )
+  expect_equal ( fun7(), "fun7" )
+  cleanup_environment()
+})
+
 test_that("Passing values as characters works", {
   char_package   <- "knitr"
   char_functions <- c("normal_print","knit_print")
@@ -176,7 +186,6 @@ test_that("Importing .into a symbol works w/ .character_only=TRUE", {
 })
 
 test_that("Imports from libraries NOT defined in .libPaths work", {
-  testthat::skip("Implementation of this fix has been reverted")
   tmp_install_dir <- tempdir()
   if (!file.exists("packageToTest_0.1.0.tar.gz")) {
     system("R CMD build packageToTest")
@@ -209,7 +218,6 @@ test_that("Functions named `get` in arbitrary environment on search path do not 
 })
 
 test_that("Functions named `get` exported from packages do not mask base::get", {
-  skip("Implementation of fix allowing custom .libPaths has been reverted")
   tmp_install_dir <- tempdir()
   library(packageToTest, lib.loc = tmp_install_dir)
   expect_true("get" %in% getNamespaceExports("packageToTest"))
@@ -281,6 +289,17 @@ test_that("Imports from specific version work",{
 
 ## .chdir parameter is tested in a separate file (test_param_chdir.R)
 
+test_that("Script errors are caught and allow manual retry", {
+  expect_error ( foo() )
+  expect_true  ( is.na(Sys.getenv("SOMECONFIG", NA)) )
+  expect_error ( import::from(module_script_error.R, foo) )
+  expect_error ( foo() )
+  Sys.setenv   ( "SOMECONFIG"="any" )
+  expect_silent( import::from(module_script_error.R, foo) )
+  expect_equal ( foo(), "foo" )
+  Sys.unsetenv ( "SOMECONFIG" )
+  cleanup_environment()
+})
 
 ## Tests end
 

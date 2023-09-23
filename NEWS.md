@@ -1,3 +1,32 @@
+
+Version 1.3.1
+=============
+
+* The `import` package will now by default use the full current set of library
+  paths, i.e. the result of `.libPaths()`, while in versions up to and including
+  `1.3.0` this defaulted to use only the *first* entry in the library paths, i.e.
+  `.library=.libPaths()[1L]`.
+
+* The order of `loadNamespace()` and `getNamespaceExports()` has been changed in
+  `import::from()`. While this is intended to be a bug fix, it is possible that
+  it affects usage in situations where specificity about the library path is
+  important.
+  
+* The two aforementioned changes had to be implemented jointly, because the bug
+  that is addressed by the second change was masking a bug that then needed to 
+  be fixed by the second change. A detailed analysis of this can be found in 
+  issue [#56](https://github.com/rticulate/import/issues/56) on GitHub.
+  
+* A regression introduced in 1.3.0, that prevented importing multiple
+  scripts into the same environment in some situations, has now been fixed.
+  
+* Errors that occur while importing modules are now handled more effectively.
+
+* An issue with package documentation, correctly documenting  `"_PACKAGE"` to
+  ensure a `-package` alias is added.
+
+
+
 Version 1.3.0
 =============
 
