@@ -1,8 +1,8 @@
-748b14b259ab18036555f78daf853d10 *DESCRIPTION
+70cf7d0385494398906481f281c64ae8 *DESCRIPTION
 e775dee718bd42df47e41fbd8e20e0ae *LICENSE
 6946443bb53114c1213602108ad3c77d *NAMESPACE
-8ae330d1e7684b3ce1bf701c8464a415 *NEWS.md
-2eac3a7143a81908dc83027e1261b595 *R/S3.R
+17baffeeae5a2673a998baa8be0c4d0c *NEWS.md
+bfe4f532d6884fefe9293cf82e3308fa *R/S3.R
 a0c18875e76d6fd7986ec62095fadbf0 *R/badge.R
 d7433738a47549fceacc64fb25b0b1cd *R/detect_bad_recursion.R
 b53b075616b259695306f38273a704fd *R/file_path.R
@@ -22,11 +22,11 @@ fac9512c2be2a4446648cf1b5e8eeb60 *R/symbol_as_character.R
 d0384f72557a606269fff59d8ce035cb *R/symbol_list.R
 ca7c3e1c43e05c3359d540b745f813db *R/zzz.R
 adca7a29cedf5df779fdb8661c77fdf5 *build/build_and_release_process.R
-aaeac4ffb4b8817e76ca0f8775d67718 *build/vignette.rds
+7ca101a0a9f07ea0fc75cb6fe5a87076 *build/vignette.rds
 12c2b702b61a5dac025c1ff7e3b3e0a0 *inst/WORDLIST
-49fe02d44c2100744a2001f9ac3072a4 *inst/doc/import.R
+6b744fe336d9f1426e5361524f791f95 *inst/doc/import.R
 d457f2649123a1f1a1703167861616c0 *inst/doc/import.Rmd
-4d72a16f4afbc12372e935f35cc1a21f *inst/doc/import.html
+3abe42f390260661274375ceabbacc43 *inst/doc/import.html
 96bff8d8e8f5c3116bf9f5d3e5743f90 *man/examples/plusone_module.R
 e0a9b86bc6704fe59234f5e26de08c15 *man/examples/sequence_module.R
 975ef570003d666dd9f88dbcdd204e57 *man/examples/some_module.R
@@ -41,7 +41,7 @@ c3978703d8f40f2679795335715e98f4 *man/figures/lifecycle-experimental.svg
 d5a4507d759d3634cfc1c71c9966fb31 *man/import.Rd
 592bc9a604e3dd846e39c37ea54d3683 *man/importfunctions.Rd
 7fd41862dfe89ab6bc26be4fa6fd12bd *tests/test_import/cleanup_environment.R
-b12bdf73acb9258b54aafa50243a2112 *tests/test_import/module_S3.R
+ab9dc212b95917aab5a771b51860473a *tests/test_import/module_S3.R
 5fda2aa20c765c7a1553e9174bc184da *tests/test_import/module_base.R
 798c0eb168ea07e99687fc11bc7f748c *tests/test_import/module_chdir/module_chdir.R
 e203ab922272bc7ccea0e41a08fe868e *tests/test_import/module_hidden_objects.R
@@ -66,7 +66,7 @@ eb67274150cc49c17d05dcc93ea02458 *tests/test_import/packageToTest/man/get.Rd
 99567271980ebfdb87ea5653e5af0267 *tests/test_import/packageToTest/man/hello.Rd
 41053b3bb6476cc1f0b8eb4d39592eb3 *tests/test_import/packageToTest_0.1.0.tar.gz
 30a2d05cfe2d88aafb5aca937e7ec6d1 *tests/test_import/skipped_test_module_urls.R
-a75e31de00cc304626e04449091629b4 *tests/test_import/test_S3.R
+d3ce5d08ef0afee5555c9c850d5cf841 *tests/test_import/test_S3.R
 ebc398e1ca1a91624412314164ffa164 *tests/test_import/test_basetemplate.R
 09de4d9c41b6900f8ad7215434e32ace *tests/test_import/test_from.R
 f5e2965b204ca144dc307e9ccbce07c6 *tests/test_import/test_hidden_objects.R

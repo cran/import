@@ -1,4 +1,4 @@
-## ---- eval = FALSE------------------------------------------------------------
+## ----eval = FALSE-------------------------------------------------------------
 #  library(PackageA)
 #  library(PackageB)
 #  
@@ -6,25 +6,25 @@
 #  value2 <- function_b(...) # and this from PackageB, but who knows?!
 #  ...
 
-## ---- eval = FALSE------------------------------------------------------------
+## ----eval = FALSE-------------------------------------------------------------
 #  function_a <- PackageA::function_a
 #  function_b <- PackageB::function_b
 
-## ---- eval=FALSE--------------------------------------------------------------
+## ----eval=FALSE---------------------------------------------------------------
 #  import::from(psych, geometric.mean, harmonic.mean)
 #  geometric.mean(trees$Volume)
 
-## ---- eval=FALSE--------------------------------------------------------------
+## ----eval=FALSE---------------------------------------------------------------
 #  import::from(dplyr, select, arrange, keep_when = filter)
 #  keep_when(mtcars, hp>250)
 
-## ---- eval=FALSE--------------------------------------------------------------
+## ----eval=FALSE---------------------------------------------------------------
 #  import::from(dplyr, keep_when = filter, .all=TRUE)
 
-## ---- eval=FALSE--------------------------------------------------------------
+## ----eval=FALSE---------------------------------------------------------------
 #  import::from(dplyr, .except=c("filter", "lag"))
 
-## ---- eval = FALSE------------------------------------------------------------
+## ----eval = FALSE-------------------------------------------------------------
 #  import::from(magrittr, "%>%")
 #  import::from(dplyr, starwars, select, mutate, keep_when = filter)
 #  import::from(tidyr, unnest)
@@ -41,13 +41,13 @@
 #    lm(log_mass ~ height + films, data = ready_data) %>%
 #    tidy
 
-## ---- eval=FALSE--------------------------------------------------------------
+## ----eval=FALSE---------------------------------------------------------------
 #  import::from(sequence_module.R, fibonacci, square, triangular)
 
-## ---- eval=FALSE--------------------------------------------------------------
+## ----eval=FALSE---------------------------------------------------------------
 #  import::from(sequence_module.R, fib=fibonacci, .except="square")
 
-## ---- eval=FALSE--------------------------------------------------------------
+## ----eval=FALSE---------------------------------------------------------------
 #  ## Do not use library() inside a module. This results in a warning,
 #  ## and functions relying on ggplot2 will not work.
 #  #library(ggplot2)
@@ -79,7 +79,7 @@
 #  plot_it <- function()
 #    qplot(Sepal.Length, Sepal.Width, data = iris, color = Species)
 
-## ---- eval=FALSE--------------------------------------------------------------
+## ----eval=FALSE---------------------------------------------------------------
 #  import::from(some_module.R, a, b, p, plot_it)
 #  
 #  ## Works:
@@ -93,7 +93,7 @@
 #  p
 #  plot_it()
 
-## ---- eval=FALSE--------------------------------------------------------------
+## ----eval=FALSE---------------------------------------------------------------
 #  # File: foo.R
 #  # Desc: Functionality related to foos.
 #  # Imports from other_resources.R
@@ -114,28 +114,28 @@
 #  
 #  fun_d <- function(...) ...
 
-## ---- eval = FALSE------------------------------------------------------------
+## ----eval = FALSE-------------------------------------------------------------
 #  # File: bar.R
 #  # Desc: Functionality related to bars.
 #  # Imports from foo.R
 #  import::here(fun_c, .from = "foo.R")
 #  ...
 
-## ---- eval = FALSE------------------------------------------------------------
+## ----eval = FALSE-------------------------------------------------------------
 #  import::from(magrittr, "%>%", "%$%", .into = "operators")
 #  import::from(dplyr, arrange, .into = "datatools")
 #  import::from(psych, describe, .into=month.name[1]) # Uses env: "January"
 
-## ---- eval = FALSE------------------------------------------------------------
+## ----eval = FALSE-------------------------------------------------------------
 #  import::into("operators", "%>%", "%$%", .from = magrittr)
 #  import::into("datatools", arrange, .from = dplyr)
 #  import::into(month.name[1], describe, .from=psych)
 
-## ---- eval = FALSE------------------------------------------------------------
+## ----eval = FALSE-------------------------------------------------------------
 #  import::here("%>%", "%$%", .from = magrittr)
 #  import::here(arrange, .from = dplyr)
 
-## ---- eval = FALSE------------------------------------------------------------
+## ----eval = FALSE-------------------------------------------------------------
 #  # Import into the local environment
 #  import::into(environment(), "%>%", .from = magrittr)
 #  
@@ -146,31 +146,31 @@
 #  # (see below)
 #  x = import::into(new.env(), "%<>%", .from = magrittr)
 
-## ---- eval = FALSE------------------------------------------------------------
+## ----eval = FALSE-------------------------------------------------------------
 #  objects <- c("tidy", "glance", "augment")
 #  import::from("broom", objects, .character_only=TRUE)
 
-## ---- eval = FALSE------------------------------------------------------------
+## ----eval = FALSE-------------------------------------------------------------
 #  objects <- setdiff(getNamespaceExports("dplyr"), c("filter","lag"))
 #  import::from("dplyr", objects, .character_only=TRUE)
 
-## ---- eval = FALSE------------------------------------------------------------
+## ----eval = FALSE-------------------------------------------------------------
 #  mymodule <- file.path(mypath, "module.R")
 #  import::from(mymodule, "myfunction", .character_only=TRUE)
 
-## ---- eval = FALSE------------------------------------------------------------
+## ----eval = FALSE-------------------------------------------------------------
 #  import::from(here::here("src/utils/module.R")), "myfunction", .character_only=TRUE)
 
-## ---- eval = FALSE------------------------------------------------------------
+## ----eval = FALSE-------------------------------------------------------------
 #  import::from(module.R, "myfunction", here::here("src/utils"))
 
-## ---- eval = FALSE------------------------------------------------------------
+## ----eval = FALSE-------------------------------------------------------------
 #  url <- "https://raw.githubusercontent.com/rticulate/import/master/man/examples/plusone_module.R"
 #  import::from(pins::pin(url), "myfunc", .character_only=TRUE)
 #  myfunc(3)
 #  #> [1] 4
 
-## ---- eval = FALSE------------------------------------------------------------
+## ----eval = FALSE-------------------------------------------------------------
 #  # Import into a new namespace, use $ to access
 #  td <- import::from(tidyr, spread, pivot_wider, .into={new.env()})
 #  dp <- import::from(dplyr, .all=TRUE, .into={new.env()})
@@ -187,7 +187,7 @@
 #  select(head(cars),dist)
 #  #> Error in select(head(cars), dist): could not find function "select"
 
-## ---- eval = FALSE------------------------------------------------------------
+## ----eval = FALSE-------------------------------------------------------------
 #  # foo.r
 #  # functions with great foonctionality
 #  foo = function(x){
@@ -202,7 +202,7 @@
 #    paste0("_", x, "_")
 #  }
 
-## ---- eval = FALSE------------------------------------------------------------
+## ----eval = FALSE-------------------------------------------------------------
 #  import::from("foo.r", foo, .S3=TRUE)
 #  
 #  foo(0) # 1
