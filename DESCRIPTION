@@ -1,7 +1,7 @@
 Package: import
 Type: Package
 Title: An Import Mechanism for R
-Version: 1.3.2
+Version: 1.3.3
 Authors@R: 
     c(person(given = "Stefan Milton",
              family = "Bache",
@@ -18,17 +18,18 @@ Description: Alternative mechanism for importing objects from packages
     Furthermore the imported objects are not placed in the current environment.
 License: MIT + file LICENSE
 ByteCompile: TRUE
-URL: https://github.com/rticulate/import
+URL: https://rticulate.github.io/import/,
+        https://github.com/rticulate/import
 BugReports: https://github.com/rticulate/import/issues
 Suggests: knitr, rmarkdown, magrittr, testthat
 Language: en-US
 VignetteBuilder: knitr
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.3
 Encoding: UTF-8
 NeedsCompilation: no
-Packaged: 2024-01-20 10:09:26 UTC; magnus
+Packaged: 2025-10-11 09:34:45 UTC; magnus
 Author: Stefan Milton Bache [aut],
   Magnus Thor Torfason [aut, cre]
 Maintainer: Magnus Thor Torfason <m@zulutime.net>
 Repository: CRAN
-Date/Publication: 2024-01-21 16:20:02 UTC
+Date/Publication: 2025-10-11 10:10:02 UTC

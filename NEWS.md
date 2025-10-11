@@ -1,4 +1,16 @@
 
+Version 1.3.3
+=============
+
+* When an attempted import causes a conflict, the name of the conflicting object 
+  is now included in the error message.
+  
+* Documentation has been updated to point to
+  [https://rticulate.github.io/import/](https://rticulate.github.io/import/), 
+  since the previous documentation web site is no longer accessible.
+
+
+
 Version 1.3.2
 =============
 

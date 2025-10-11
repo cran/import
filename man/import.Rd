@@ -2,8 +2,8 @@
 % Please edit documentation in R/import.R
 \docType{package}
 \name{import}
-\alias{import}
 \alias{import-package}
+\alias{import}
 \title{An Import Mechanism for R}
 \description{
 This is an alternative mechanism for importing objects from
@@ -27,9 +27,9 @@ For usage instructions and examples, see \code{\link{from}}, \code{\link{into}},
 
 Helpful links:
 \itemize{
-\item \url{https://import.rticulate.org}
-\item \url{https://github.com/rticulate/import}
-\item \url{https://github.com/rticulate/import/issues}
+\item \url{https://rticulate.github.io/import/}
+\item \url{https://github.com/rticulate/import/}
+\item \url{https://github.com/rticulate/import/issues/}
 }
 }
 \author{
