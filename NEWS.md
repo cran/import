@@ -1,4 +1,16 @@
 
+Version 1.3.4
+=============
+
+* New function, import::what(), which lists objects available for import from
+  a given package or module.
+  
+* Documentation links now point both to release and development documentation.
+
+* Other minor documentation improvements.
+
+
+
 Version 1.3.3
 =============
 

@@ -11,12 +11,21 @@
 # function_b <- PackageB::function_b
 
 ## ----eval=FALSE---------------------------------------------------------------
+# import::what(psych) |> grepv(pattern = "mean")
+# #> [1] "circadian.mean" "circular.mean"  "geometric.mean" "harmonic.mean"
+# #> [5] "winsor.mean"    "winsor.means"
 # import::from(psych, geometric.mean, harmonic.mean)
 # geometric.mean(trees$Volume)
+# #> [1] 26.38331
+# harmonic.mean(trees$Volume)
+# #> [1] 23.15689
 
 ## ----eval=FALSE---------------------------------------------------------------
 # import::from(dplyr, select, arrange, keep_when = filter)
 # keep_when(mtcars, hp>250)
+# #>                 mpg cyl disp  hp drat   wt qsec vs am gear carb
+# #> Ford Pantera L 15.8   8  351 264 4.22 3.17 14.5  0  1    5    4
+# #> Maserati Bora  15.0   8  301 335 3.54 3.57 14.6  0  1    5    8
 
 ## ----eval=FALSE---------------------------------------------------------------
 # import::from(dplyr, keep_when = filter, .all=TRUE)
@@ -42,7 +51,11 @@
 #   tidy
 
 ## ----eval=FALSE---------------------------------------------------------------
+# import::what(sequence_module.R)
+# #> [1] "fibonacci"  "square"     "triangular"
 # import::from(sequence_module.R, fibonacci, square, triangular)
+# fibonacci(7)
+# #> [1] 13
 
 ## ----eval=FALSE---------------------------------------------------------------
 # import::from(sequence_module.R, fib=fibonacci, .except="square")
@@ -54,7 +67,7 @@
 # 
 # ## This is also not recommended, because it is not clear wether recursively
 # ## imported functions should be available after the module is imported
-# #import::here(qplot, .from = ggplot2)
+# #import::from(qplot, .from = ggplot2)
 # 
 # ## This is the recommended way to recursively import functions on which
 # ## module functions depend. The qplot function will be available to
